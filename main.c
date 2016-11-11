@@ -4,18 +4,19 @@
 #include <unistd.h>
 #define MAX_BRIGHTNESS 416
 #define MIN_BRIGHTNESS 0
+#define DEFAULT_AMOUNT 10
 #define PATH "/sys/class/backlight/intel_backlight/brightness"
 int getBrightness();
 void setBrightness(int target);
 
-void inc() {
-	int brightness = getBrightness() + 10;
+void inc(int amount) {
+	int brightness = getBrightness() + amount;
 	brightness = brightness > MAX_BRIGHTNESS ? MAX_BRIGHTNESS : brightness;
     setBrightness(brightness);
 }
 
-void dec() {
-    int brightness = getBrightness() - 10;
+void dec(int amount) {
+    int brightness = getBrightness() - amount;
     brightness = brightness < MIN_BRIGHTNESS ? MIN_BRIGHTNESS : brightness;
     setBrightness(brightness);
 }
@@ -54,8 +55,18 @@ int getBrightness() {
 }
 
 int main(int argc, char **argv) {
-	if (argc != 2) return 1;
-	if (!strcmp(argv[1], "inc")) inc();
-	if (!strcmp(argv[1], "dec")) dec();
+	if (argc < 2) {
+        puts("Usage: BacklightTool OPTION [AMOUNT]\n"\
+             "Options: inc, dec, pulse");
+        return 0;
+    }
+    int amount = DEFAULT_AMOUNT;
+    if (argc > 2) amount = atoi(argv[2]);
+    if (amount < 0 || amount > MAX_BRIGHTNESS) {
+        puts("Invalid amount.\n");
+        return 0;
+    }
+	if (!strcmp(argv[1], "inc")) inc(amount);
+	if (!strcmp(argv[1], "dec")) dec(amount);
 	if (!strcmp(argv[1], "pulse")) pulse();
 }
