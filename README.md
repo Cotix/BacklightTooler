@@ -2,6 +2,14 @@
 Simple C utility to tool your backlight
 
 # How to use
-Simply compile with gcc main.c -o BacklightTooler. Then you can run it with ./BacklightTooler inc or dec to increment or decrement the backlight.
+Use the install.sh script to compile and install BacklightTooler. BacklightTooler gets installed to /usr/bin/BacklightTooler owned as root with setuid. This makes it easy to use BacklightTooler for keybindings etc.
+After instalation BacklightTooler can be run by executing it from command line or any command/program launcher. I'd recommend setting it up with keybindings in your windowmanager.
 
-I'd recommend to run it as setuid for ease of use so you can bind it to a key combination.
+# Usage
+Some examples:
+``
+BacklightTooler inc  # increments backlight with 10
+BacklightTooler inc 25 # increments backlight with 20
+BacklightTooler dec # Decrements
+BacklightTooler set 100 # Sets backlight to 100.
+``
