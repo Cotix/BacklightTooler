@@ -11,7 +11,7 @@ Some examples:
 BacklightTooler inc  # increments backlight with 10
 
 
-BacklightTooler inc 25 # increments backlight with 20
+BacklightTooler inc 25 # increments backlight with 25
 
 
 BacklightTooler dec # Decrements
