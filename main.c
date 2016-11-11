@@ -33,8 +33,7 @@ void pulse(int amount) {
     int low = 1;
     int high = MAX_BRIGHTNESS;
     int t;
-    int counter = 30;
-    while (counter --> 0){
+    while (1){
         for (t = low; t < high; ++t) {
             setBrightness(t);
             usleep(20000/amount);
