@@ -9,7 +9,13 @@ After instalation BacklightTooler can be run by executing it from command line o
 Some examples:
 ``
 BacklightTooler inc  # increments backlight with 10
+
+
 BacklightTooler inc 25 # increments backlight with 20
+
+
 BacklightTooler dec # Decrements
+
+
 BacklightTooler set 100 # Sets backlight to 100.
 ``
