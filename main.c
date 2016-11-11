@@ -29,7 +29,7 @@ void setBrightness(int target) {
 	fclose(file);
 }
 
-void pulse() {
+void pulse(int amount) {
     int low = 1;
     int high = MAX_BRIGHTNESS;
     int t;
@@ -37,11 +37,11 @@ void pulse() {
     while (counter --> 0){
         for (t = low; t < high; ++t) {
             setBrightness(t);
-            usleep(2000);
+            usleep(20000/amount);
         }
         for (t = high; t > low; --t) {
             setBrightness(t);
-            usleep(2000);
+            usleep(20000/amount);
         }
     }
 }
@@ -68,5 +68,5 @@ int main(int argc, char **argv) {
     }
 	if (!strcmp(argv[1], "inc")) inc(amount);
 	if (!strcmp(argv[1], "dec")) dec(amount);
-	if (!strcmp(argv[1], "pulse")) pulse();
+	if (!strcmp(argv[1], "pulse")) pulse(amount);
 }
