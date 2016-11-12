@@ -35,6 +35,8 @@ void writeBrightness(int target) {
 }
 
 void setBrightness(int target) {
+    if (target < MIN_BRIGHTNESS) target = MIN_BRIGHTNESS;
+    if (target > MAX_BRIGHTNESS) target = MAX_BRIGHTNESS;
     int current = getBrightness();
     int inc = current > target ? -1 : 1;
     int steps = (target-current)*inc;
