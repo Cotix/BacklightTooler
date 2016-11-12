@@ -10,8 +10,8 @@ int getBrightness();
 void setBrightness(int target);
 
 void inc(int amount) {
-	int brightness = getBrightness() + amount;
-	brightness = brightness > MAX_BRIGHTNESS ? MAX_BRIGHTNESS : brightness;
+    int brightness = getBrightness() + amount;
+    brightness = brightness > MAX_BRIGHTNESS ? MAX_BRIGHTNESS : brightness;
     setBrightness(brightness);
 }
 
@@ -22,11 +22,11 @@ void dec(int amount) {
 }
 
 void setBrightness(int target) {
-	char buffer[256];
-	sprintf(buffer, "%i", target);
-	FILE* file = fopen(PATH, "w");
+    char buffer[256];
+    sprintf(buffer, "%i", target);
+    FILE* file = fopen(PATH, "w");
     fwrite(buffer, 4, 1, file);
-	fclose(file);
+    fclose(file);
 }
 
 void pulse(int amount) {
@@ -46,15 +46,15 @@ void pulse(int amount) {
 }
 
 int getBrightness() {
-	FILE* file = fopen(PATH, "r");
-	char buf[16];
-	fread(buf, 8, 1, file);
-	fclose(file);
-	return atoi(buf);
+    FILE* file = fopen(PATH, "r");
+    char buf[16];
+    fread(buf, 8, 1, file);
+    fclose(file);
+    return atoi(buf);
 }
 
 int main(int argc, char **argv) {
-	if (argc < 2) {
+    if (argc < 2) {
         puts("Usage: BacklightTool OPTION [AMOUNT]\n"\
              "Options: set, inc, dec, pulse");
         return 0;
@@ -65,8 +65,8 @@ int main(int argc, char **argv) {
         puts("Invalid amount.\n");
         return 0;
     }
-	if (!strcmp(argv[1], "inc")) inc(amount);
-	if (!strcmp(argv[1], "dec")) dec(amount);
-	if (!strcmp(argv[1], "pulse")) pulse(amount);
+    if (!strcmp(argv[1], "inc")) inc(amount);
+    if (!strcmp(argv[1], "dec")) dec(amount);
+    if (!strcmp(argv[1], "pulse")) pulse(amount);
     if (!strcmp(argv[1], "set") && argc > 2) setBrightness(amount);
 }
