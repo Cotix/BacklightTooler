@@ -1,5 +1,5 @@
 # BacklightTooler
-Simple C utility to tool your backlight
+Lightweight C utility to controll your backlight on most linux laptops. 
 
 # How to use
 Use the install.sh script to compile and install BacklightTooler. BacklightTooler gets installed to /usr/bin/BacklightTooler owned as root with setuid. This makes it easy to use BacklightTooler for keybindings etc.
