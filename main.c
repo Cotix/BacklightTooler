@@ -1,11 +1,12 @@
+#include "webcam.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+
 #define MAX_BRIGHTNESS 416
 #define MIN_BRIGHTNESS 0
 #define DEFAULT_AMOUNT 10
 #define PATH "/sys/class/backlight/intel_backlight/brightness"
+
 int getBrightness();
 void setBrightness(int target);
 
@@ -53,10 +54,18 @@ int getBrightness() {
     return atoi(buf);
 }
 
+void autoBrightness() {
+    int target = getLightLevel();
+    target -= LOW_AVERAGE;
+    target *= MAX_BRIGHTNESS;
+    target /= HIGH_AVERAGE;
+    setBrightness(target);
+}
+
 int main(int argc, char **argv) {
     if (argc < 2) {
         puts("Usage: BacklightTool OPTION [AMOUNT]\n"\
-             "Options: set, inc, dec, pulse");
+             "Options: set, inc, dec, pulse, auto");
         return 0;
     }
     int amount = DEFAULT_AMOUNT;
@@ -68,5 +77,6 @@ int main(int argc, char **argv) {
     if (!strcmp(argv[1], "inc")) inc(amount);
     if (!strcmp(argv[1], "dec")) dec(amount);
     if (!strcmp(argv[1], "pulse")) pulse(amount);
+    if (!strcmp(argv[1], "auto")) autoBrightness();
     if (!strcmp(argv[1], "set") && argc > 2) setBrightness(amount);
 }
