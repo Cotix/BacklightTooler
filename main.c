@@ -1,10 +1,12 @@
 #include "webcam.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #define MAX_BRIGHTNESS 416
 #define MIN_BRIGHTNESS 0
 #define DEFAULT_AMOUNT 10
+#define DEFAULT_SPEED 15
 #define PATH "/sys/class/backlight/intel_backlight/brightness"
 
 int getBrightness();
@@ -22,12 +24,25 @@ void dec(int amount) {
     setBrightness(brightness);
 }
 
-void setBrightness(int target) {
+void writeBrightness(int target) {
+    if (target < MIN_BRIGHTNESS) target = MIN_BRIGHTNESS;
+    if (target > MAX_BRIGHTNESS) target = MAX_BRIGHTNESS;
     char buffer[256];
     sprintf(buffer, "%i", target);
     FILE* file = fopen(PATH, "w");
     fwrite(buffer, 4, 1, file);
     fclose(file);
+}
+
+void setBrightness(int target) {
+    int current = getBrightness();
+    int inc = current > target ? -1 : 1;
+    int steps = (target-current)*inc;
+    while (steps --> 0) {
+        current += inc;
+        writeBrightness(current);
+        usleep(20000/DEFAULT_SPEED);
+    }
 }
 
 void pulse(int amount) {
@@ -36,11 +51,11 @@ void pulse(int amount) {
     int t;
     while (1){
         for (t = low; t < high; ++t) {
-            setBrightness(t);
+            writeBrightness(t);
             usleep(20000/amount);
         }
         for (t = high; t > low; --t) {
-            setBrightness(t);
+            writeBrightness(t);
             usleep(20000/amount);
         }
     }
@@ -54,8 +69,8 @@ int getBrightness() {
     return atoi(buf);
 }
 
-void autoBrightness() {
-    int target = getLightLevel();
+void autoBrightness(int amount) {
+    int target = getLightLevel()*amount;
     target -= LOW_AVERAGE;
     target *= MAX_BRIGHTNESS;
     target /= HIGH_AVERAGE;
@@ -77,6 +92,6 @@ int main(int argc, char **argv) {
     if (!strcmp(argv[1], "inc")) inc(amount);
     if (!strcmp(argv[1], "dec")) dec(amount);
     if (!strcmp(argv[1], "pulse")) pulse(amount);
-    if (!strcmp(argv[1], "auto")) autoBrightness();
+    if (!strcmp(argv[1], "auto")) autoBrightness(amount);
     if (!strcmp(argv[1], "set") && argc > 2) setBrightness(amount);
 }
