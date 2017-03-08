@@ -79,21 +79,26 @@ void autoBrightness(int amount) {
     setBrightness(target);
 }
 
+void help() {
+    puts("Usage: BacklightTool OPTION [AMOUNT]\n"\
+         "Options: set, inc, dec, pulse, auto");
+}
+
 int main(int argc, char **argv) {
     if (argc < 2) {
-        puts("Usage: BacklightTool OPTION [AMOUNT]\n"\
-             "Options: set, inc, dec, pulse, auto");
+        help();
         return 0;
     }
     int amount = DEFAULT_AMOUNT;
     if (argc > 2) amount = atoi(argv[2]);
-    if (amount <= 0 || amount > MAX_BRIGHTNESS) {
+    if (amount < 0 || amount > MAX_BRIGHTNESS) {
         puts("Invalid amount.\n");
         return 0;
     }
     if (!strcmp(argv[1], "inc")) inc(amount);
-    if (!strcmp(argv[1], "dec")) dec(amount);
-    if (!strcmp(argv[1], "pulse")) pulse(amount);
-    if (!strcmp(argv[1], "auto")) autoBrightness(amount);
-    if (!strcmp(argv[1], "set") && argc > 2) setBrightness(amount);
+    else if (!strcmp(argv[1], "dec")) dec(amount);
+    else if (!strcmp(argv[1], "pulse")) pulse(amount);
+    else if (!strcmp(argv[1], "auto")) autoBrightness(amount);
+    else if (!strcmp(argv[1], "set") && argc > 2) setBrightness(amount);
+    else help();
 }
