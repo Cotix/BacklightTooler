@@ -2,15 +2,47 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <dirent.h>
 
 #define MAX_BRIGHTNESS 416
 #define MIN_BRIGHTNESS 0
 #define DEFAULT_AMOUNT 10
 #define DEFAULT_SPEED 15
-#define PATH "/sys/class/backlight/intel_backlight/brightness"
 
 int getBrightness();
 void setBrightness(int target);
+
+// This function enables to get the brightness file for systems,
+// where backlight brightness is located in non intel folders
+// like /sys/class/backlight/acpi_video0/brightness
+void getBacklightBrightnessFilePath (char *path)
+{
+    DIR *dir;
+    struct dirent *ent;
+
+    if ((dir = opendir ("/sys/class/backlight/")) != NULL) 
+    {
+        int found = 0;
+        while ((ent = readdir (dir)) != NULL) {
+            if ( strcmp(ent->d_name, ".")!=0 && strcmp(ent->d_name, "..")!=0 ) {
+                // take first folder and get out
+                sprintf (path, "/sys/class/backlight/%s/brightness", ent->d_name);
+                found = 1;
+                break;
+            }
+        }
+
+        if (found==0) {
+            fprintf (stdout, "Unable to find any folder under /sys/class/backlight/");
+            exit (EXIT_FAILURE);
+        }
+
+        closedir (dir);
+    } else {
+        fprintf (stderr, "Unable to get the current systems backlight folder.");
+        exit (EXIT_FAILURE);
+    }
+}
 
 void inc(int amount) {
     int brightness = getBrightness() + amount;
@@ -29,7 +61,9 @@ void writeBrightness(int target) {
     if (target > MAX_BRIGHTNESS) target = MAX_BRIGHTNESS;
     char buffer[256];
     sprintf(buffer, "%i", target);
-    FILE* file = fopen(PATH, "w");
+    char brightnessFilePath[512];
+    getBacklightBrightnessFilePath (brightnessFilePath);
+    FILE* file = fopen(brightnessFilePath, "w");
     fwrite(buffer, 4, 1, file);
     fclose(file);
 }
@@ -64,7 +98,9 @@ void pulse(int amount) {
 }
 
 int getBrightness() {
-    FILE* file = fopen(PATH, "r");
+    char brightnessFilePath[512];
+    getBacklightBrightnessFilePath (brightnessFilePath);
+    FILE* file = fopen(brightnessFilePath, "r");
     char buf[16];
     fread(buf, 8, 1, file);
     fclose(file);
